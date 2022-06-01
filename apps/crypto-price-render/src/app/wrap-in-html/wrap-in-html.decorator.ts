@@ -1,22 +1,16 @@
+import { SetMetadata, Type } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { WrapInHtmlOptions } from './wrap-in-html.service';
 
 const METADATA_KEY = Symbol('WrapInHtml');
 
-interface ObjWithMetadata extends Object {
-  [METADATA_KEY]?: WrapInHtmlMetadata;
+export function WrapInHtml(options: WrapInHtmlOptions) {
+  return SetMetadata(METADATA_KEY, options);
 }
 
-type WrapInHtmlMetadata = Record<string, WrapInHtmlOptions>;
-
-export function WrapInHtml(options: WrapInHtmlOptions): MethodDecorator {
-  return (target: ObjWithMetadata, propertyKey) => {
-    const metadata =
-      target[METADATA_KEY] || (target[METADATA_KEY] = Object.create(null));
-
-    metadata[propertyKey] = options;
-  };
-}
-
-export function getWrapInHtmlMetadata(target: unknown) {
-  return (target as any)?.prototype?.[METADATA_KEY];
+export function getWrapInHtmlMetadata(
+  reflector: Reflector,
+  target: Function | Type<unknown>
+) {
+  return reflector.get<WrapInHtmlOptions | undefined>(METADATA_KEY, target);
 }

@@ -4,8 +4,9 @@ import { WrapInJsonOptions } from './wrap-in-json.service';
 
 const METADATA_KEY = Symbol('WrapInJson');
 
-export const WrapInJson = (options?: WrapInJsonOptions) =>
-  SetMetadata(METADATA_KEY, options);
+export function WrapInJson(options?: WrapInJsonOptions) {
+  return SetMetadata(METADATA_KEY, options);
+}
 
 export function getWrapInJsonMetadata(
   reflector: Reflector,
