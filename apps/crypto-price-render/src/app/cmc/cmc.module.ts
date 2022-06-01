@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { CmcService } from './cmc.service';
 import { CmcController } from './cmc.controller';
 import { WrapInHtmlModule } from '../wrap-in-html/wrap-in-html.module';
+import { WrapInJsonModule } from '../wrap-in-json/wrap-in-json.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { WrapInHtmlModule } from '../wrap-in-html/wrap-in-html.module';
       headers: { 'X-CMC_PRO_API_KEY': environment.cmc.apiToken ?? 'blank' },
     }),
     WrapInHtmlModule,
+    WrapInJsonModule,
   ],
   controllers: [CmcController],
   providers: [CmcService],

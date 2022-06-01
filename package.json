@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node dist/apps/crypto-price-render/main.js",
+    "serve": "nx serve",
     "build": "nx build",
     "test": "nx test"
   },
