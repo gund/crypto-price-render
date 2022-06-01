@@ -17,6 +17,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@nestjs/axios": "^0.0.8",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@nrwl/cli": "14.1.9",
