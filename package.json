@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nx serve",
+    "start": "node dist/apps/crypto-price-render/main.js",
     "build": "nx build",
     "test": "nx test"
   },
