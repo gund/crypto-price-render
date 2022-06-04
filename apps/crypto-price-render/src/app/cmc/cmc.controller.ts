@@ -15,11 +15,6 @@ import { WrapInJsonInterceptor } from '../wrap-in-json/wrap-in-json.interceptor'
 import { CmcService } from './cmc.service';
 
 const GetPriceApiDocs = chainMethodDecorators(
-  ApiParam({
-    name: 'symbol',
-    description: 'Symbol name to display',
-    example: 'btc',
-  }),
   ApiQuery({
     name: 'currency',
     required: false,
@@ -28,43 +23,117 @@ const GetPriceApiDocs = chainMethodDecorators(
   })
 );
 
+const GetPriceHtml = chainMethodDecorators(
+  UseInterceptors(WrapInHtmlInterceptor),
+  WrapInHtml({ title: '${data}' }),
+  ApiProduces('text/html'),
+  ApiOkResponse({
+    type: String,
+    description: 'HTML containing a price of the symbol',
+  }),
+  GetPriceApiDocs
+);
+
 class GetPriceJsonResponse {
   @ApiProperty()
   price?: number;
 }
+
+const GetPriceJson = chainMethodDecorators(
+  UseInterceptors(WrapInJsonInterceptor),
+  WrapInJson({ key: 'price' }),
+  ApiOkResponse({
+    type: GetPriceJsonResponse,
+    description: 'JSON containing a price of the symbol',
+  }),
+  GetPriceApiDocs
+);
 
 @Controller('cmc')
 export class CmcController {
   constructor(private readonly cmcService: CmcService) {}
 
   @Get('price/:symbol')
-  @UseInterceptors(WrapInHtmlInterceptor)
-  @WrapInHtml({ title: '${req.params.symbol} - ${data}' })
-  @ApiProduces('text/html')
-  @ApiOkResponse({
-    type: String,
-    description: 'HTML containing a price of the symbol',
+  @GetPriceHtml
+  @ApiParam({
+    name: 'symbol',
+    description: 'Symbol name to display',
+    example: 'btc',
   })
-  @GetPriceApiDocs
   getPriceHtml(
     @Param('symbol', UpperCasePipe) symbol: string,
     @Query('currency', UpperCasePipe) currency?: string
   ) {
-    return this.cmcService.fetchSymbolPrice(symbol, { currency });
+    return this.cmcService.fetchSymbolPrice({ symbol, currency });
   }
 
   @Get('price/:symbol/json')
-  @UseInterceptors(WrapInJsonInterceptor)
-  @WrapInJson({ key: 'price' })
-  @ApiOkResponse({
-    type: GetPriceJsonResponse,
-    description: 'JSON containing a price of the symbol',
+  @GetPriceJson
+  @ApiParam({
+    name: 'symbol',
+    description: 'Symbol name to display',
+    example: 'btc',
   })
-  @GetPriceApiDocs
   getPriceJson(
     @Param('symbol', UpperCasePipe) symbol: string,
     @Query('currency', UpperCasePipe) currency?: string
   ) {
-    return this.cmcService.fetchSymbolPrice(symbol, { currency });
+    return this.cmcService.fetchSymbolPrice({ symbol, currency });
+  }
+
+  @Get('price/id/:id')
+  @GetPriceHtml
+  @ApiParam({
+    name: 'id',
+    description: 'Symbol ID to display',
+    example: '1',
+  })
+  getPriceIdHtml(
+    @Param('id', UpperCasePipe) id: string,
+    @Query('currency', UpperCasePipe) currency?: string
+  ) {
+    return this.cmcService.fetchSymbolPrice({ id, currency });
+  }
+
+  @Get('price/id/:id/json')
+  @GetPriceJson
+  @ApiParam({
+    name: 'id',
+    description: 'Symbol ID to display',
+    example: '1',
+  })
+  getPriceIdJson(
+    @Param('id', UpperCasePipe) id: string,
+    @Query('currency', UpperCasePipe) currency?: string
+  ) {
+    return this.cmcService.fetchSymbolPrice({ id, currency });
+  }
+
+  @Get('price/slug/:slug')
+  @GetPriceHtml
+  @ApiParam({
+    name: 'slug',
+    description: 'Symbol slug to display',
+    example: 'bitcoin',
+  })
+  getPriceSlugHtml(
+    @Param('slug') slug: string,
+    @Query('currency', UpperCasePipe) currency?: string
+  ) {
+    return this.cmcService.fetchSymbolPrice({ slug, currency });
+  }
+
+  @Get('price/slug/:slug/json')
+  @GetPriceJson
+  @ApiParam({
+    name: 'slug',
+    description: 'Symbol slug to display',
+    example: 'bitcoin',
+  })
+  getPriceSlugJson(
+    @Param('slug') slug: string,
+    @Query('currency', UpperCasePipe) currency?: string
+  ) {
+    return this.cmcService.fetchSymbolPrice({ slug, currency });
   }
 }
