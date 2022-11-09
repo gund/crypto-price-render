@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: host
+    env_file: .env.local
+    expose:
+      - 8080
+    environment:
+      - PORT=8080
