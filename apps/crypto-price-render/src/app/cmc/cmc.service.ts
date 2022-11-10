@@ -27,6 +27,7 @@ export class CmcService {
   constructor(private readonly http: HttpService) {}
 
   fetchSymbolQuote(options: CmcQuoteOptions = {} as any) {
+    console.log('Fetching quote', options);
     const id = 'id' in options ? options.id : undefined;
     const slug = 'slug' in options ? options.slug : undefined;
     const symbol = 'symbol' in options ? options.symbol : undefined;

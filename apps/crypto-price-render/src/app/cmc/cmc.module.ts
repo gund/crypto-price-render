@@ -1,5 +1,5 @@
 import { HttpModule } from '@nestjs/axios';
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { environment } from '../../environments/environment';
 import { CmcService } from './cmc.service';
 import { CmcController } from './cmc.controller';
@@ -13,6 +13,10 @@ import { WrapInJsonModule } from '../wrap-in-json/wrap-in-json.module';
       maxRedirects: 0,
       baseURL: environment.cmc.apiUrl,
       headers: { 'X-CMC_PRO_API_KEY': environment.cmc.apiToken ?? 'blank' },
+    }),
+    CacheModule.register({
+      ttl: 30,
+      max: 100,
     }),
     WrapInHtmlModule,
     WrapInJsonModule,

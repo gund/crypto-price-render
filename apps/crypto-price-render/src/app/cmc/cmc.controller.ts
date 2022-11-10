@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import {
+  CacheInterceptor,
+  Controller,
+  Get,
+  Param,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiOkResponse,
   ApiParam,
@@ -50,6 +57,7 @@ const GetPriceJson = chainMethodDecorators(
 );
 
 @Controller('cmc')
+@UseInterceptors(CacheInterceptor)
 export class CmcController {
   constructor(private readonly cmcService: CmcService) {}
 
