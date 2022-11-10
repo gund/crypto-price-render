@@ -1,0 +1,40 @@
+useDotenv: true
+service: crypto-price-render
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  architecture: arm64
+  runtime: nodejs16.x
+  stage: production
+  region: eu-central-1
+  versionFunctions: false
+
+package:
+  individually: true
+  excludeDevDependencies: true
+  patterns:
+    - '!.env*'
+    - '!apps/**'
+    - '!libs/**'
+    - '!dist/**'
+    - '!tools/**'
+
+functions:
+  api:
+    handler: dist/apps/crypto-price-render/main.handler
+    environment:
+      APP_CMC_API_TOKEN: ${env:APP_CMC_API_TOKEN}
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
+    package:
+      patterns:
+        - 'dist/apps/crypto-price-render/**'

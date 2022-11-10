@@ -1,11 +1,11 @@
 import { HttpModule } from '@nestjs/axios';
 import { CacheModule, Module } from '@nestjs/common';
 import { environment } from '../../environments/environment';
-import { CmcService } from './cmc.service';
-import { CmcController } from './cmc.controller';
+import { RayModule } from '../ray/ray.module';
 import { WrapInHtmlModule } from '../wrap-in-html/wrap-in-html.module';
 import { WrapInJsonModule } from '../wrap-in-json/wrap-in-json.module';
-import { RayModule } from '../ray/ray.module';
+import { CmcController } from './cmc.controller';
+import { CmcService } from './cmc.service';
 
 @Module({
   imports: [
