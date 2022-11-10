@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { logError } from '../operators/log-error';
+import { RayService } from '../ray/ray.service';
 
 export interface CmcQuoteBase {
   currency?: string;
@@ -24,10 +25,16 @@ export type CmcQuoteOptions = CmcQuoteId | CmcQuoteSlug | CmcQuoteSymbol;
 
 @Injectable()
 export class CmcService {
-  constructor(private readonly http: HttpService) {}
+  constructor(
+    private readonly http: HttpService,
+    private readonly rayService: RayService
+  ) {}
 
-  fetchSymbolQuote(options: CmcQuoteOptions = {} as any) {
-    console.log('Fetching quote', options);
+  fetchSymbolQuote(options: CmcQuoteOptions) {
+    const logger = this.rayService.getLogger(CmcService.name);
+
+    logger.log('Fetching quote', options);
+
     const id = 'id' in options ? options.id : undefined;
     const slug = 'slug' in options ? options.slug : undefined;
     const symbol = 'symbol' in options ? options.symbol : undefined;
@@ -41,13 +48,20 @@ export class CmcService {
         map((res) => {
           const data = Object.values<any>(res.data.data)[0];
           const symbol = Array.isArray(data) ? data[0] : data;
-          return symbol.quote[convert];
+          const quote = symbol.quote[convert];
+
+          logger.log('Resolved quote', quote);
+
+          return quote;
         }),
-        logError({ msgPrefix: 'Fetching symbol quote failed:' })
+        logError({
+          msgPrefix: 'Fetching symbol quote failed:',
+          log: logger.log.bind(logger),
+        })
       );
   }
 
-  fetchSymbolPrice(options?: CmcQuoteOptions): Observable<number> {
+  fetchSymbolPrice(options: CmcQuoteOptions): Observable<number> {
     return this.fetchSymbolQuote(options).pipe(map((quote) => quote.price));
   }
 }

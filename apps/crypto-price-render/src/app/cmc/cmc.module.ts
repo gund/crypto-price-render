@@ -5,6 +5,7 @@ import { CmcService } from './cmc.service';
 import { CmcController } from './cmc.controller';
 import { WrapInHtmlModule } from '../wrap-in-html/wrap-in-html.module';
 import { WrapInJsonModule } from '../wrap-in-json/wrap-in-json.module';
+import { RayModule } from '../ray/ray.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WrapInJsonModule } from '../wrap-in-json/wrap-in-json.module';
     }),
     WrapInHtmlModule,
     WrapInJsonModule,
+    RayModule,
   ],
   controllers: [CmcController],
   providers: [CmcService],
