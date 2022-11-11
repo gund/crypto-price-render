@@ -31,11 +31,5 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Build
         run: npx nx build crypto-price-render --prod
-      - name: Clear Deps
-        run: rm -rf node_modules
-      - name: Install Prod-only Deps
-        run: npm ci --ignore-scripts --omit=dev
-      - name: Install Serverless for deploy
-        run: npm i -g serverless@3.24.1 serverless-offline@11.3.0
       - name: Deploy Serverless
         run: tools/scripts/lambda-deploy.sh
