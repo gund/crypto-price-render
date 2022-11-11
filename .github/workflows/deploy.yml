@@ -1,0 +1,41 @@
+name: Deploy Workflow
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
+  APP_CMC_API_TOKEN: ${{ secrets.APP_CMC_API_TOKEN }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-node-
+      - name: Install Deps
+        run: npm ci --ignore-scripts
+      - name: Build
+        run: npx nx build crypto-price-render --prod
+      - name: Clear Deps
+        run: rm -rf node_modules
+      - name: Install Prod-only Deps
+        run: npm ci --ignore-scripts --omit=dev
+      - name: Install Serverless for deploy
+        run: npm i -g serverless@3.24.1 serverless-offline@11.3.0
+      - name: Deploy Serverless
+        run: tools/scripts/lambda-deploy.sh
