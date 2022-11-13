@@ -7,18 +7,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiParam,
   ApiProduces,
   ApiProperty,
   ApiQuery,
+  ApiTooManyRequestsResponse,
 } from '@nestjs/swagger';
 import { UpperCasePipe } from '../upper-case/upper-case.pipe';
 import { chainMethodDecorators } from '../util/chain-decorators';
 import { WrapInHtml } from '../wrap-in-html/wrap-in-html.decorator';
-import { WrapInHtmlInterceptor } from '../wrap-in-html/wrap-in-html.interceptor';
 import { WrapInJson } from '../wrap-in-json/wrap-in-json.decorator';
-import { WrapInJsonInterceptor } from '../wrap-in-json/wrap-in-json.interceptor';
 import { CmcService } from './cmc.service';
 
 const GetPriceApiDocs = chainMethodDecorators(
@@ -30,14 +30,15 @@ const GetPriceApiDocs = chainMethodDecorators(
   })
 );
 
-const GetPriceHtml = chainMethodDecorators(
-  UseInterceptors(WrapInHtmlInterceptor),
+const GetPriceHtmlDocs = chainMethodDecorators(
   WrapInHtml({ title: '${data}' }),
   ApiProduces('text/html'),
   ApiOkResponse({
     type: String,
     description: 'HTML containing a price of the symbol',
   }),
+  ApiTooManyRequestsResponse({ description: 'Too many requests' }),
+  ApiInternalServerErrorResponse({ description: 'Internal server error' }),
   GetPriceApiDocs
 );
 
@@ -46,14 +47,39 @@ class GetPriceJsonResponse {
   price?: number;
 }
 
-const GetPriceJson = chainMethodDecorators(
-  UseInterceptors(WrapInJsonInterceptor),
+const GetPriceJsonDocs = chainMethodDecorators(
   WrapInJson({ key: 'price' }),
   ApiOkResponse({
     type: GetPriceJsonResponse,
     description: 'JSON containing a price of the symbol',
   }),
+  ApiTooManyRequestsResponse({ description: 'Too many requests' }),
+  ApiInternalServerErrorResponse({ description: 'Internal server error' }),
   GetPriceApiDocs
+);
+
+const SymbolParamDocs = chainMethodDecorators(
+  ApiParam({
+    name: 'symbol',
+    description: 'Symbol name to display',
+    example: 'btc',
+  })
+);
+
+const IdParamDocs = chainMethodDecorators(
+  ApiParam({
+    name: 'id',
+    description: 'Symbol ID to display',
+    example: '1',
+  })
+);
+
+const SlugParamDocs = chainMethodDecorators(
+  ApiParam({
+    name: 'slug',
+    description: 'Symbol slug to display',
+    example: 'bitcoin',
+  })
 );
 
 @Controller('cmc')
@@ -62,12 +88,8 @@ export class CmcController {
   constructor(private readonly cmcService: CmcService) {}
 
   @Get('price/:symbol')
-  @GetPriceHtml
-  @ApiParam({
-    name: 'symbol',
-    description: 'Symbol name to display',
-    example: 'btc',
-  })
+  @GetPriceHtmlDocs
+  @SymbolParamDocs
   getPriceHtml(
     @Param('symbol', UpperCasePipe) symbol: string,
     @Query('currency', UpperCasePipe) currency?: string
@@ -76,12 +98,8 @@ export class CmcController {
   }
 
   @Get('price/:symbol/json')
-  @GetPriceJson
-  @ApiParam({
-    name: 'symbol',
-    description: 'Symbol name to display',
-    example: 'btc',
-  })
+  @GetPriceJsonDocs
+  @SymbolParamDocs
   getPriceJson(
     @Param('symbol', UpperCasePipe) symbol: string,
     @Query('currency', UpperCasePipe) currency?: string
@@ -90,12 +108,8 @@ export class CmcController {
   }
 
   @Get('price/id/:id')
-  @GetPriceHtml
-  @ApiParam({
-    name: 'id',
-    description: 'Symbol ID to display',
-    example: '1',
-  })
+  @GetPriceHtmlDocs
+  @IdParamDocs
   getPriceIdHtml(
     @Param('id', UpperCasePipe) id: string,
     @Query('currency', UpperCasePipe) currency?: string
@@ -104,12 +118,8 @@ export class CmcController {
   }
 
   @Get('price/id/:id/json')
-  @GetPriceJson
-  @ApiParam({
-    name: 'id',
-    description: 'Symbol ID to display',
-    example: '1',
-  })
+  @GetPriceJsonDocs
+  @IdParamDocs
   getPriceIdJson(
     @Param('id', UpperCasePipe) id: string,
     @Query('currency', UpperCasePipe) currency?: string
@@ -118,12 +128,8 @@ export class CmcController {
   }
 
   @Get('price/slug/:slug')
-  @GetPriceHtml
-  @ApiParam({
-    name: 'slug',
-    description: 'Symbol slug to display',
-    example: 'bitcoin',
-  })
+  @GetPriceHtmlDocs
+  @SlugParamDocs
   getPriceSlugHtml(
     @Param('slug') slug: string,
     @Query('currency', UpperCasePipe) currency?: string
@@ -132,12 +138,8 @@ export class CmcController {
   }
 
   @Get('price/slug/:slug/json')
-  @GetPriceJson
-  @ApiParam({
-    name: 'slug',
-    description: 'Symbol slug to display',
-    example: 'bitcoin',
-  })
+  @GetPriceJsonDocs
+  @SlugParamDocs
   getPriceSlugJson(
     @Param('slug') slug: string,
     @Query('currency', UpperCasePipe) currency?: string
