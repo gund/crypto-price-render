@@ -31,10 +31,11 @@ functions:
     events:
       - http:
           method: ANY
-          path: /
+          path: '/{proxy+}'
       - http:
           method: ANY
-          path: '{proxy+}'
+          path: '/docs/{proxy+}'
     package:
       patterns:
         - 'dist/apps/crypto-price-render/**'
+        - 'node_modules/swagger-ui-dist/**'
