@@ -25,7 +25,6 @@ package:
 
 functions:
   api:
-    provisionedConcurrency: 1
     handler: dist/apps/crypto-price-render/main.handler
     environment:
       APP_CMC_API_TOKEN: ${env:APP_CMC_API_TOKEN}
