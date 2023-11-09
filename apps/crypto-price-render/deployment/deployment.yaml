@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: crypto-price-render
+  name: crypto-price-render
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crypto-price-render
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: crypto-price-render
+    spec:
+      containers:
+        - name: crypto-price-render
+          image: gundua/crypto-price-render:latest
+          env:
+            - name: START_SERVER
+              value: 'true'
+            - name: APP_CMC_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cmc-api
+                  key: token
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: '0.5Gi'
+              cpu: '0.2'
+            requests:
+              memory: '0.5Gi'
+              cpu: '0.2'
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+status: {}

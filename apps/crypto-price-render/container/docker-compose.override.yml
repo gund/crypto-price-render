@@ -1,0 +1,5 @@
+version: '3.8'
+services:
+  crypto-price-render:
+    ports:
+      - "4000:3000"

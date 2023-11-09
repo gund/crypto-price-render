@@ -1,12 +1,12 @@
 version: '3.8'
 services:
-  api:
+  crypto-price-render:
     ports:
-      - "80:8080"
+      - "80:3000"
     cpu_count: 1
     restart: unless-stopped
     healthcheck:
-      test: curl -f http://localhost:8080/api/ || exit 1
+      test: curl -f http://localhost:3000/api/ || exit 1
       interval: 5m
       timeout: 10s
       retries: 3

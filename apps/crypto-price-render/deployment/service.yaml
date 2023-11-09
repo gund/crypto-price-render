@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app: crypto-price-render
+  name: crypto-price-render
+spec:
+  externalIPs:
+    - 49.12.110.104
+  ports:
+    - name: '3000'
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: crypto-price-render
+status:
+  loadBalancer: {}

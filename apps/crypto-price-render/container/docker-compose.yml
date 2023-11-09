@@ -1,12 +1,10 @@
 version: '3.8'
 services:
-  api:
+  crypto-price-render:
     build:
       context: .
       dockerfile: ./Dockerfile
       target: host
-    env_file: .env
+    env_file: ../../.env
     expose:
-      - 8080
-    environment:
-      - PORT=8080
+      - 8080:3000
