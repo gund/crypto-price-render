@@ -34,7 +34,7 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [],
       "options": {
         "lintFilePatterns": ["apps/crypto-price-render/**/*.ts"]
       }
@@ -45,6 +45,28 @@
       "options": {
         "jestConfig": "apps/crypto-price-render/jest.config.ts",
         "passWithNoTests": true
+      }
+    },
+    "image": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "docker buildx build --platform {args.platforms} -t gundua/crypto-price-render:latest {args.output} -f apps/crypto-price-render/container/Dockerfile .",
+        "output": ""
+      },
+      "configurations": {
+        "init": {
+          "command": "docker buildx create --use --bootstrap"
+        },
+        "amd64": {
+          "platforms": "linux/amd64"
+        },
+        "arm64": {
+          "platforms": "linux/arm64/v8"
+        },
+        "all": {
+          "platforms": "linux/amd64,linux/arm64/v8"
+        }
       }
     }
   },
