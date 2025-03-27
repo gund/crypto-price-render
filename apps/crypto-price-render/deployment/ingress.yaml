@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: crypto-price-render
+  labels:
+    app: crypto-price-render
+  annotations:
+    kubernetes.io/ingress.class: public
+    cert-manager.io/cluster-issuer: letsencrypt-mk8s
+spec:
+  ingressClassName: public
+  rules:
+    - host: cpr.gund.gay
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: crypto-price-render
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - cpr.gund.gay
+      secretName: crypto-price-render-tls
