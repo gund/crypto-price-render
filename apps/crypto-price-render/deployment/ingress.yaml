@@ -20,7 +20,18 @@ spec:
                 name: crypto-price-render
                 port:
                   number: 3000
+    - host: crypto-price-render.gund.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: crypto-price-render
+                port:
+                  number: 3000
   tls:
     - hosts:
         - cpr.gund.gay
+        - crypto-price-render.gund.io
       secretName: crypto-price-render-tls
